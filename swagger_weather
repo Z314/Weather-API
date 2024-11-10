@@ -1,0 +1,1093 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Weather API",
+    "version": "1.0.0"
+  },
+  "components": {
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\""
+      }
+    },
+    "schemas": {
+      "LoginRequest": {
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "UpdateDeviceNameRequest": {
+        "type": "object",
+        "properties": {
+          "device_name": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": []
+    }
+  ],
+  "paths": {
+    "/login": {
+      "post": {
+        "summary": "Login to use the application. Supply email and password",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Username/email and password required"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "200": {
+            "description": "Successful login"
+          },
+          "401": {
+            "description": "Unauthorised. Please authenticate using valid credentials"
+          }
+        }
+      }
+    },
+    "/weather_data": {
+      "get": {
+        "summary": "Retrieve all records (limited to first 10 in js file)",
+        "responses": {
+          "200": {
+            "description": "All _id values retrieved successfully"
+          },
+          "404": {
+            "description": " no document found"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "401": {
+            "description": "Unauthorised. Please authenticate using valid credentials"
+          }
+        }
+      }
+    },
+    "/weather_data/{deviceName}/{mydate}": {
+      "get": {
+        "summary": "Retrieve 1 document by device/station name and date",
+        "parameters": [
+          {
+            "name": "deviceName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Woodford_Sensor"
+            },
+            "description": "device name"
+          },
+          {
+            "name": "mydate",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2021-05-07T01:14:08.000+00:00"
+            },
+            "description": "date"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Data retrieved successfully"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "404": {
+            "description": "Document not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "401": {
+            "description": "Unauthorised. Please authenticate using valid credentials"
+          }
+        }
+      }
+    },
+    "/weather_data/dateRange/{mydate1}/{mydate2}": {
+      "get": {
+        "summary": "Retrieve max temp for all stations for date range",
+        "parameters": [
+          {
+            "name": "mydate1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2021-05-07T01:14:08.000+00:00"
+            },
+            "description": "oldest date"
+          },
+          {
+            "name": "mydate2",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2021-05-07T01:14:08.000+00:00"
+            },
+            "description": "latest date"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Data retrieved successfully"
+          },
+          "400": {
+            "description": "invalid date format"
+          },
+          "404": {
+            "description": "no document found"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "401": {
+            "description": "Unauthorised. Please authenticate using valid credentials"
+          }
+        }
+      }
+    },
+    "/weather_data/tempflucs/{deviceName}/{mydate1}/{mydate2}": {
+      "get": {
+        "summary": "Retrieve temp fluctuation over time",
+        "parameters": [
+          {
+            "name": "deviceName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Woodford_Sensor"
+            },
+            "description": "device name"
+          },
+          {
+            "name": "mydate1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2021-05-07T01:14:08.000+00:00"
+            },
+            "description": "oldest date"
+          },
+          {
+            "name": "mydate2",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2021-05-07T01:14:08.000+00:00"
+            },
+            "description": "latest date"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Data retrieved successfully"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "404": {
+            "description": "Document not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "401": {
+            "description": "Unauthorised. Please authenticate using valid credentials"
+          }
+        }
+      }
+    },
+    "/weather_data/humRainflucs/{deviceName}/{mydate1}/{mydate2}": {
+      "get": {
+        "summary": "Retrieve humid and rain fluctuation over time",
+        "parameters": [
+          {
+            "name": "deviceName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Woodford_Sensor"
+            },
+            "description": "device name"
+          },
+          {
+            "name": "mydate1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2021-05-07T01:14:08.000+00:00"
+            },
+            "description": "oldest date"
+          },
+          {
+            "name": "mydate2",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2021-05-07T01:14:08.000+00:00"
+            },
+            "description": "latest date"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Data retrieved successfully"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "404": {
+            "description": "Document not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "401": {
+            "description": "Unauthorised. Please authenticate using valid credentials"
+          }
+        }
+      }
+    },
+    "/weather_data/deviceName/maxprecip/{device_name}": {
+      "get": {
+        "summary": "retrieve max precip by device in last 5 months",
+        "parameters": [
+          {
+            "name": "device_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Woodford_Sensor"
+            },
+            "description": "device name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Data retrieved successfully"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "404": {
+            "description": "Document not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "401": {
+            "description": "Unauthorised. Please authenticate using valid credentials"
+          }
+        }
+      }
+    },
+    "/weather_data/deviceName2/allFields/{device_name}": {
+      "get": {
+        "summary": "Retrieve data based on Device Name field (limited to first 10 in js file)",
+        "parameters": [
+          {
+            "name": "device_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Woodford_Sensor"
+            },
+            "description": "device name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Data retrieved successfully"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "404": {
+            "description": "Document not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "401": {
+            "description": "Unauthorised. Please authenticate using valid credentials"
+          }
+        }
+      }
+    },
+    "/device_names": {
+      "get": {
+        "summary": "Return all device names",
+        "responses": {
+          "200": {
+            "description": "All names retrieved successfully"
+          },
+          "404": {
+            "description": "Document not found"
+          },
+          "500": {
+            "description": "Internal server erroroo"
+          },
+          "401": {
+            "description": "Unauthorised. Please authenticate using valid credentials"
+          }
+        }
+      }
+    },
+    "/weather_data/replaceOne/{id}": {
+      "put": {
+        "summary": "Replace a weather record",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "ObjectId",
+              "example": "66d171666255759e65ae07a4"
+            },
+            "description": "ID of the record"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "device_name": {
+                    "type": "string",
+                    "description": "name of the weather record",
+                    "example": "Woodford_sensor"
+                  },
+                  "wind_direction_deg": {
+                    "type": "number",
+                    "description": "wind direction",
+                    "example": "18.7"
+                  },
+                  "humidity_percent": {
+                    "type": "number",
+                    "description": "the humidity",
+                    "example": "39.87"
+                  },
+                  "vapor_pressure_kpa": {
+                    "type": "number",
+                    "description": "the pressure",
+                    "example": "1.77"
+                  },
+                  "solar_radiation_w_m2": {
+                    "type": "number",
+                    "description": "solar radiation",
+                    "example": "280.8"
+                  },
+                  "max_wind_speed_m_s": {
+                    "type": "number",
+                    "description": "the wind speed",
+                    "example": "3.77"
+                  },
+                  "atmospheric_pressure_kpa": {
+                    "type": "number",
+                    "description": "atmospheric pressure",
+                    "example": "12.5"
+                  },
+                  "temperature_c": {
+                    "type": "number",
+                    "description": "The tremp",
+                    "example": "33.3"
+                  },
+                  "longitude": {
+                    "type": "number",
+                    "description": "The longitude",
+                    "example": "-28.9"
+                  },
+                  "latitude": {
+                    "type": "number",
+                    "description": "The latitude",
+                    "example": "156.7"
+                  },
+                  "time": {
+                    "type": "integer",
+                    "format": "date-time",
+                    "description": "The date/time",
+                    "example": "1620358445000"
+                  },
+                  "precipitation_mm_h": {
+                    "type": "number",
+                    "description": "The Rain",
+                    "example": "0.7"
+                  }
+                },
+                "required": [
+                  "id",
+                  "device_name",
+                  "precipitation_mm_h",
+                  "time",
+                  "latitude",
+                  "longitude",
+                  "temperature_c",
+                  "atmospheric_pressure_kPa",
+                  "max_wind_speed_m_s",
+                  "solar_radiation_w_m2",
+                  "vapor_pressure_kpa",
+                  "humidity_percent",
+                  "wind_direction_degree"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Record added or updated successfully"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "404": {
+            "description": "No document found"
+          },
+          "304": {
+            "description": "no change made"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "401": {
+            "description": "Unauthorised. Please authenticate using valid credentials"
+          }
+        }
+      }
+    },
+    "/weather_data/replaceUpdateMany/{devicename}": {
+      "put": {
+        "summary": "Replace or Update many weather records",
+        "parameters": [
+          {
+            "name": "devicename",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Woodford_Sensor"
+            },
+            "description": "device name of the weather record"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "device_name": {
+                    "type": "string",
+                    "description": "name of the weather record",
+                    "example": "Woodford_sensor"
+                  }
+                },
+                "required": [
+                  "device_name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Record added or updated successfully"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "404": {
+            "description": "No document found"
+          },
+          "304": {
+            "description": "no change made"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "401": {
+            "description": "Unauthorised. Please authenticate using valid credentials"
+          }
+        }
+      }
+    },
+    "/weather_data/one/replaceUpdateOne/{id}": {
+      "put": {
+        "summary": "Update one weather record",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "ObjectId",
+              "example": "66d171666255759e65ae07a4"
+            },
+            "description": "ID of the record"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "precipitation_mm_h": {
+                    "type": "number",
+                    "description": "Precipitation",
+                    "example": "3.6"
+                  }
+                },
+                "required": [
+                  "precipitation_mm_h"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Record added or updated successfully"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "404": {
+            "description": "No document found"
+          },
+          "304": {
+            "description": "no change made"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "401": {
+            "description": "Unauthorised. Please authenticate using valid credentials"
+          }
+        }
+      }
+    },
+    "/weather_data/addDoc": {
+      "post": {
+        "summary": "Add one a weather record",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "device_name": {
+                    "type": "string",
+                    "description": "name of the weather record",
+                    "example": "Woodford_sensor"
+                  },
+                  "wind_direction_deg": {
+                    "type": "number",
+                    "description": "wind direction",
+                    "example": "18.7"
+                  },
+                  "humidity_percent": {
+                    "type": "number",
+                    "description": "the humidity",
+                    "example": "39.87"
+                  },
+                  "vapor_pressure_kpa": {
+                    "type": "number",
+                    "description": "the pressure",
+                    "example": "1.77"
+                  },
+                  "solar_radiation_w_m2": {
+                    "type": "number",
+                    "description": "solar radiation",
+                    "example": "280.8"
+                  },
+                  "max_wind_speed_m_s": {
+                    "type": "number",
+                    "description": "the wind speed",
+                    "example": "3.77"
+                  },
+                  "atmospheric_pressure_kpa": {
+                    "type": "number",
+                    "description": "atmospheric pressure",
+                    "example": "12.5"
+                  },
+                  "temperature_c": {
+                    "type": "number",
+                    "description": "The tremp",
+                    "example": "33.3"
+                  },
+                  "longitude": {
+                    "type": "number",
+                    "description": "The longitude",
+                    "example": "-28.9"
+                  },
+                  "latitude": {
+                    "type": "number",
+                    "description": "The latitude",
+                    "example": "156.7"
+                  },
+                  "time": {
+                    "type": "integer",
+                    "format": "date-time",
+                    "description": "The date/time",
+                    "example": "1620358445000"
+                  },
+                  "precipitation_mm_h": {
+                    "type": "number",
+                    "description": "The Rain",
+                    "example": "0.7"
+                  }
+                },
+                "required": [
+                  "device_name",
+                  "precipitation_mm_h",
+                  "time",
+                  "latitude",
+                  "longitude",
+                  "temperature_c",
+                  "atmospheric_pressure_kPa",
+                  "max_wind_speed_m_s",
+                  "solar_radiation_w_m2",
+                  "vapor_pressure_kpa",
+                  "humidity_percent",
+                  "wind_direction_degree"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Record added or updated successfully"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "401": {
+            "description": "Unauthorised. Please authenticate using valid credentials"
+          }
+        }
+      }
+    },
+    "/weather_data_multipleInsert": {
+      "post": {
+        "summary": "add multiple records/documents. Populate docs.json first with records and place inside folder",
+        "responses": {
+          "201": {
+            "description": "All inputted success"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "401": {
+            "description": "Unauthorised. Please authenticate using valid credentials"
+          }
+        }
+      }
+    },
+    "/weather_data/{deleteId}": {
+      "delete": {
+        "summary": "Delete record based on given id",
+        "parameters": [
+          {
+            "name": "deleteId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "ObjectId",
+              "example": "66d171666255759e65ae07a4"
+            },
+            "description": "ID of the record"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Record deleted successfully"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "404": {
+            "description": "Record not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "401": {
+            "description": "Unauthorised. Please authenticate using valid credentials"
+          }
+        }
+      }
+    },
+    "/weather_data/deleteMany/{deviceName}": {
+      "delete": {
+        "summary": "Delete records. This will delete all records with device name supplied",
+        "parameters": [
+          {
+            "name": "deviceName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Woodford_Sensor"
+            },
+            "description": "device name of records to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Records deleted successfully"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "404": {
+            "description": "Record not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "401": {
+            "description": "Unauthorised. Please authenticate using valid credentials"
+          }
+        }
+      }
+    },
+    "/user/addOne": {
+      "post": {
+        "summary": "Add one user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "name of person",
+                    "example": "Kay"
+                  },
+                  "email": {
+                    "type": "string",
+                    "description": "email address",
+                    "example": "kay@example.com"
+                  },
+                  "role": {
+                    "type": "string",
+                    "description": "teacher, user, sensor",
+                    "example": "teacher"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "the password",
+                    "example": "xyz"
+                  }
+                },
+                "required": [
+                  "name",
+                  "email",
+                  "role",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Record added successfully"
+          },
+          "409": {
+            "description": "user already exists."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "401": {
+            "description": "Unauthorised. Please authenticate using valid credentials"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/user/addMultiple/users": {
+      "post": {
+        "summary": "add multiple documents/users. Populate user_data.json in folder first with records",
+        "responses": {
+          "200": {
+            "description": "All inputted sucess"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "404": {
+            "description": "not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "401": {
+            "description": "Unauthorised. Please authenticate using valid credentials"
+          }
+        }
+      }
+    },
+    "/user/updateMany/{role}/{date1}/{date2}": {
+      "put": {
+        "summary": "Update multiple users to a role, based on creation date range",
+        "parameters": [
+          {
+            "name": "role",
+            "in": "path",
+            "required": true,
+            "type": "String",
+            "description": "role: teacher, user, sensor"
+          },
+          {
+            "name": "date1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2021-05-07T01:14:08.000+00:00"
+            },
+            "description": "oldest date"
+          },
+          {
+            "name": "date2",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2021-05-07T01:14:08.000+00:00"
+            },
+            "description": "latest date"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Data updated successfully"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "404": {
+            "description": "Nothing modified"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "401": {
+            "description": "Unauthorised. Please authenticate using valid credentials"
+          }
+        }
+      }
+    },
+    "/user/deleteOne/{id}": {
+      "delete": {
+        "summary": "Delete user record based on given id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "ObjectId",
+              "example": "66d171666255759e65ae07a4"
+            },
+            "description": "ID of the record"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "user Record deleted successfully"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "404": {
+            "description": "user Record not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "401": {
+            "description": "Unauthorised. Please authenticate using valid credentials"
+          }
+        }
+      }
+    },
+    "/user/deleteMultiple/users/{role}/{date1}/{date2}": {
+      "delete": {
+        "summary": "Delete multiple users based on role and creation dates",
+        "parameters": [
+          {
+            "name": "role",
+            "in": "path",
+            "required": true,
+            "type": "String",
+            "description": "role: teacher, user, sensor"
+          },
+          {
+            "name": "date1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2021-05-07T01:14:08.000+00:00"
+            },
+            "description": "oldest date"
+          },
+          {
+            "name": "date2",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2021-05-07T01:14:08.000+00:00"
+            },
+            "description": "latest date"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "records deleted"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "404": {
+            "description": "Document not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "401": {
+            "description": "Unauthorised. Please authenticate using valid credentials"
+          }
+        }
+      }
+    }
+  },
+  "components2": {
+    "responses": {
+      "CorsPreflight": {
+        "description": "CORS headers returned",
+        "headers": {
+          "Access-Control-Allow-Origin": {
+            "description": "Allowed origin",
+            "schema": {
+              "type": "string",
+              "example": "http://localhost"
+            }
+          },
+          "Access-Control-Allow-Methods": {
+            "description": "Allowed methods",
+            "schema": {
+              "type": "string",
+              "example": "GET, PUT, POST, DELETE"
+            }
+          },
+          "Access-Control-Allow-Headers": {
+            "description": "Allowed headers",
+            "schema": {
+              "type": "string",
+              "example": "Content-Type,Authorization"
+            }
+          }
+        }
+      }
+    }
+  },
+  "paths2": {
+    "/options": {
+      "options": {
+        "summary": "CORS Preflight",
+        "description": "Handles CORS preflight requests for the endpoint",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/CorsPreflight"
+          }
+        }
+      }
+    }
+  }
+}
