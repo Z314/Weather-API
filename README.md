@@ -1,2 +1,2 @@
-# Weather-API
-A weather API with Node.js and MongoDB
+# Weather-App
+A weather App with Node.js and MongoDB
